@@ -1,0 +1,1363 @@
+openapi: 3.0.1
+info:
+  title: Covie Policy API
+  version: ''
+paths:
+  /accounts/{account_id}/mfa_requirements:
+    post:
+      description: Require all account users to have an MFA application configured
+      operationId: AccountService.enableAccountMfaRequired
+      tags:
+        - Account
+      parameters:
+        - name: account_id
+          in: path
+          description: Unique identifier of the account.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountWithConfig'
+      summary: Enable Account MFA Requirement
+      security: &ref_0
+        - BasicAuth: []
+    delete:
+      description: >-
+        Remove requirement for all account users to have an MFA application
+        configured
+      operationId: AccountService.disableAccountMfaRequired
+      tags:
+        - Account
+      parameters:
+        - name: account_id
+          in: path
+          description: Unique identifier of the account.
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      summary: Disable Account MFA Requirement
+      security: *ref_0
+  /applications/{application_id}/links:
+    get:
+      description: Lists an application's links.
+      operationId: ApplicationService.getApplicationLinks
+      tags:
+        - Application
+      parameters:
+        - name: application_id
+          in: path
+          description: Unique identifier of the application.
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of results to return.
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Specifies the offset of the first result to return.
+          required: false
+          schema:
+            type: integer
+        - name: provider
+          in: query
+          description: Partial name of a provider to search against
+          required: false
+          schema:
+            type: string
+        - name: created_since
+          in: query
+          description: Limit results to links created on or after this date.
+          required: false
+          schema:
+            type: string
+        - name: created_until
+          in: query
+          description: Limit results to links created on or before this date.
+          required: false
+          schema:
+            type: string
+        - name: updated_since
+          in: query
+          description: Limit results to links last updated on or since this date.
+          required: false
+          schema:
+            type: string
+        - name: updated_until
+          in: query
+          description: Limit results to links last updated on or before this date.
+          required: false
+          schema:
+            type: string
+        - name: synced_since
+          in: query
+          description: Limit results to links last synced on or after this date.
+          required: false
+          schema:
+            type: string
+        - name: synced_until
+          in: query
+          description: Limit results to links last synced on or before this date.
+          required: false
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: Search for link via ID
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter link status; separate multiple statuses (OR'd) with commas
+          required: false
+          schema:
+            type: string
+        - name: has_metadata
+          in: query
+          description: Filter whether a link has metadata attached
+          required: false
+          schema:
+            type: boolean
+        - name: policy_type
+          in: query
+          description: The type of policy linked.
+          required: false
+          schema:
+            type: string
+        - name: integration_ids
+          in: query
+          description: >-
+            If provided, only show items with any of the specified integration
+            IDs, comma-separated.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Links'
+      summary: List Application Links
+      security: *ref_0
+  /applications/{application_id}/policies:
+    get:
+      description: Lists an application's policies.
+      operationId: ApplicationService.getApplicationPolicies
+      tags:
+        - Application
+      parameters:
+        - name: application_id
+          in: path
+          description: Unique identifier of the application.
+          required: true
+          schema:
+            type: string
+        - name: integration_ids
+          in: query
+          description: >-
+            If provided, only show items with any of the specified integration
+            IDs, comma-separated.
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of results to return.
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Specifies the offset of the first result to return.
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policies'
+      summary: List Application Policies
+      security: *ref_0
+  /events/{event_id}/broadcasts:
+    post:
+      description: Rebroadcast an event.
+      operationId: EventService.rebroadcast
+      tags:
+        - Event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebroadcastEventResponse'
+      summary: Rebroadcast Event
+      security: *ref_0
+  /policies/{policy_id}:
+    get:
+      description: Retrieve a Policy object that was previously connected via a Link
+      operationId: PolicyService.getPoliciesPolicyId
+      tags:
+        - Policy
+      parameters:
+        - name: policy_id
+          in: path
+          description: The unique identifier of the policy object being sought.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+      summary: Retrieve Policy
+      security: *ref_0
+  /policies/{policy_id}/events:
+    get:
+      description: List all events that have been triggered for the selected policy
+      operationId: PolicyService.listPolicyEvents
+      tags:
+        - Policy
+      parameters:
+        - name: policy_id
+          in: path
+          description: The unique identifier of the policy object being sought.
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of results to return.
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Specifies the offset of the first result to return.
+          required: false
+          schema:
+            type: integer
+        - name: event_type
+          in: query
+          description: Filter events by type.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Events'
+      summary: List Policy Events
+      security: *ref_0
+components:
+  schemas:
+    AccountWithConfig:
+      type: object
+      properties: {}
+    Carrier:
+      type: object
+      description: >-
+        A basic object describing the individual insurance company which has
+        issued a policy.
+      properties:
+        name:
+          type: string
+          description: The name of the issuing company.
+    Policyholder:
+      type: object
+      description: >-
+        Describes the company or person which is legally listed on, and entitled
+        to benefits from the policy for which they are attached.
+      properties:
+        type:
+          $ref: '#/components/schemas/InsuredType'
+          description: An indication if the insured is a business or individual.
+        name:
+          $ref: '#/components/schemas/Name'
+        email_addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/EMail'
+          description: The contact e-mail addresses of the insured, if known.
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+          description: The contact phone numbers of the insured, if known.
+        is_primary:
+          type: boolean
+          description: >-
+            A flag indicating if the insured is explicitly referenced as
+            primary, or assumed primary as being the first insured listed on the
+            policy.
+    InsuredType:
+      type: string
+      enum:
+        - person
+        - business
+      description: An indication if the insured is a business or individual.
+    Name:
+      type: object
+      description: Contains a name for a person or business
+      properties:
+        full:
+          type: string
+    Address:
+      type: object
+      description: >-
+        A universal base object encapsulating the physical address related to
+        another object.
+      properties:
+        line1:
+          type: string
+          description: The first line of the address being provided.
+        line2:
+          type: string
+          description: The second line of the address, when provided.
+        city:
+          type: string
+          description: The city in which the address provided is located.
+        state:
+          type: string
+          description: >-
+            The state or provide in which the address is located, represented in
+            abbreviated form.
+        postal_code:
+          type: string
+          description: The 5 digit postal code in which the address is located.
+    EMail:
+      type: object
+      description: >-
+        A universal base object encapsulating the e-mail address related to
+        another object.
+      properties:
+        address:
+          type: string
+        is_primary:
+          type: boolean
+    Phone:
+      type: object
+      description: >-
+        A universal base object encapsulating the phone number related to
+        another object.
+      properties:
+        type:
+          $ref: '#/components/schemas/PhoneType'
+        number:
+          type: string
+        is_primary:
+          type: boolean
+    PhoneType:
+      type: string
+      enum:
+        - mobile
+        - home
+        - office
+        - fax
+    Vehicle:
+      type: object
+      description: >-
+        Describes the motor vehicle which is covered under the terms of a
+        policy. This object contains details of the specific coverages provided
+        for this vehicle and information about the drivers who are covered.
+      properties:
+        vin:
+          type: string
+          description: >-
+            The unique Vehicle Identification Number (VIN) that pertains to this
+            vehicle.
+        make:
+          type: string
+          description: The manufacturer of the vehicle covered by this policy.
+        model:
+          type: string
+          description: The model of the vehicle covered by this policy.
+        year:
+          type: string
+          description: The 4-digit model year of the vehicle covered by this policy.
+        trim:
+          type: string
+          description: The trim of the vehicle covered by this policy.
+        series:
+          type: string
+          description: The series of the vehicle covered by this policy.
+        annual_mileage:
+          type: integer
+          description: >-
+            When provided, the estimated number of miles this vehicle is
+            expected to be driven, per year. When a range is specified by the
+            carrier, the highest value in the range is provided.
+        usage:
+          $ref: '#/components/schemas/VehicalUsage'
+          description: The intended usage of the vehicle by the insured.
+        ownership:
+          $ref: '#/components/schemas/VehicleOwnership'
+          description: >-
+            Whether or not the vehicle specified is owned, leased, or financed
+            by the insured.
+        drivers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Driver'
+          description: A list of drivers assigned to this vehicle.
+        interests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interest'
+          description: >-
+            The financial institution which presently holds a lien against the
+            vehicle.
+        coverages:
+          $ref: '#/components/schemas/VehicleCoverage'
+          description: >-
+            A list of all coverages that apply to this vehicle. The omission of
+            any coverage indicates that coverage was either declined or does not
+            apply to this vehicle.
+        discounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount'
+          description: A list of discounts being applied to the premium of this vehicle.
+    VehicalUsage:
+      type: string
+      enum:
+        - commute
+        - pleasure
+        - business
+      description: The intended usage of the vehicle by the insured.
+    VehicleOwnership:
+      type: string
+      enum:
+        - own
+        - lease
+        - finance
+      description: >-
+        Whether or not the vehicle specified is owned, leased, or financed by
+        the insured.
+    VehicleCoverage:
+      type: object
+      description: >-
+        A list of all coverages that apply to this vehicle. The omission of any
+        coverage indicates that coverage was either declined or does not apply
+        to this vehicle.
+      properties:
+        bodily_injury:
+          $ref: '#/components/schemas/Coverage'
+        property_damage:
+          $ref: '#/components/schemas/Coverage'
+        medical_payments:
+          $ref: '#/components/schemas/Coverage'
+        personal_injury_protection:
+          $ref: '#/components/schemas/Coverage'
+        comprehensive:
+          $ref: '#/components/schemas/Coverage'
+        collision:
+          $ref: '#/components/schemas/Coverage'
+        uninsured_bodily_injury:
+          $ref: '#/components/schemas/Coverage'
+        uninsured_property_damage:
+          $ref: '#/components/schemas/Coverage'
+        underinsured_bodily_injury:
+          $ref: '#/components/schemas/Coverage'
+        underinsured_property_damage:
+          $ref: '#/components/schemas/Coverage'
+        roadside:
+          $ref: '#/components/schemas/Coverage'
+        rental_car:
+          $ref: '#/components/schemas/Coverage'
+        full_glass:
+          $ref: '#/components/schemas/Coverage'
+        nonowned_bodily_injury:
+          $ref: '#/components/schemas/Coverage'
+        nonowned_property_damage:
+          $ref: '#/components/schemas/Coverage'
+        nonowned_medical_payments:
+          $ref: '#/components/schemas/Coverage'
+        nonowned_physical_damage:
+          $ref: '#/components/schemas/Coverage'
+        oem_parts:
+          $ref: '#/components/schemas/Coverage'
+        ride_share:
+          $ref: '#/components/schemas/Coverage'
+        all_risk:
+          $ref: '#/components/schemas/Coverage'
+        new_vehicle_replacement:
+          $ref: '#/components/schemas/Coverage'
+        collision_deductible_waiver:
+          $ref: '#/components/schemas/Coverage'
+        loan_lease_payoff:
+          $ref: '#/components/schemas/Coverage'
+        custom_parts:
+          $ref: '#/components/schemas/Coverage'
+        automobile_death_benefit:
+          $ref: '#/components/schemas/Coverage'
+        trip_interruption:
+          $ref: '#/components/schemas/Coverage'
+        personal_property:
+          $ref: '#/components/schemas/Coverage'
+        limited_property_damage:
+          $ref: '#/components/schemas/Coverage'
+        property_protection:
+          $ref: '#/components/schemas/Coverage'
+        personal_injury_attendant_rider:
+          $ref: '#/components/schemas/Coverage'
+        rented_vehicle_liability:
+          $ref: '#/components/schemas/Coverage'
+        motorcycle_enhanced_injury:
+          $ref: '#/components/schemas/Coverage'
+        limited_personal_injury_protection:
+          $ref: '#/components/schemas/Coverage'
+        carried_contents:
+          $ref: '#/components/schemas/Coverage'
+    Driver:
+      type: object
+      description: >-
+        Describes the individual driver who is considered the routine operator
+        of the vehicle it is attached to and who is explicitly included under
+        the coverage terms selected for the vehicle.
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        date_of_birth:
+          type: string
+          description: >-
+            The date of birth of the driver, when provided by the insurer.
+            Represented as an ISO-8601 date.
+        marital_status:
+          $ref: '#/components/schemas/MaritalStatus'
+          description: >-
+            The current marital status of the driver, if provided. The
+            `separated` value includes divorced status.
+        gender:
+          $ref: '#/components/schemas/Gender'
+          description: The reported gender of the driver, when provided by the insurer.
+        age_licensed:
+          type: integer
+          description: >-
+            The age in which the driver was first licensed, when provided by the
+            insurer.
+        license_number:
+          type: string
+          description: >-
+            The drivers license number of the driver when provided by the
+            insurer. This value may be masked.
+        license_state:
+          type: string
+          description: >-
+            The state in which the driver is licensed. Represented in
+            abbreviated form.
+        is_primary:
+          type: boolean
+          description: >-
+            A flag indicating if the driver is described as the primary driver
+            of the vehicle. When no clear indication is made by an insurer, the
+            first listed driver is assumed to be the primary.
+    MaritalStatus:
+      type: string
+      enum:
+        - married
+        - single
+        - separated
+        - widowed
+      description: >-
+        The current marital status of the driver, if provided. The `separated`
+        value includes divorced status.
+    Gender:
+      type: string
+      enum:
+        - male
+        - female
+        - non-binary
+      description: The reported gender of the driver, when provided by the insurer.
+    Interest:
+      type: object
+      description: >-
+        Describes an entity, person or company, that has a legal interest in a
+        piece of covered property. This could represent a bank or other
+        financial institution who owns a loan/mortgage/lien over a covered
+        property, a landlord who owns the property a tenant is leasing, or some
+        other recognized stakeholder who is entitled to certain information
+        rights from the insurance company regarding the covered property.
+      properties:
+        type:
+          $ref: '#/components/schemas/InterestType'
+          description: >-
+            The type of interest being described. Such as: lender, landlord,
+            guarantor, or other.
+        name:
+          $ref: '#/components/schemas/Name'
+        email_addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/EMail'
+          description: E-Mail addresses used to contact the interested party.
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+          description: >-
+            Phone Numbers used to call the interested party. Provided in E164
+            format.
+    InterestType:
+      type: string
+      enum:
+        - landlord
+        - lender
+        - guarantor
+        - other
+      description: >-
+        The type of interest being described. Such as: lender, landlord,
+        guarantor, or other.
+    Coverage:
+      type: object
+      description: >-
+        Describes the features of a specific coverage element for a person or
+        property, encapsulating the limits, deductibles, and premium information
+        therein.
+      properties:
+        name:
+          type: string
+          description: >-
+            The name of the coverage element being described. This is a coded
+            value offered as a convenience method to avoid the need to
+            introspect code to understand which branch of logic is being
+            evaluated.
+        limits:
+          $ref: '#/components/schemas/CoverageLimits'
+          description: >-
+            A breakout of different limits and sublimits that apply to this
+            coverage item. When the limits property is null, then the coverage
+            described is selected but limits are not applicable for the coverage
+            feature. The ommission of any limit scope indicates that it does not
+            apply to the coverage.
+    CoverageLimits:
+      type: object
+      description: >-
+        A breakout of different limits and sublimits that apply to this coverage
+        item. When the limits property is null, then the coverage described is
+        selected but limits are not applicable for the coverage feature. The
+        ommission of any limit scope indicates that it does not apply to the
+        coverage.
+      properties:
+        duration:
+          $ref: '#/components/schemas/PeriodValue'
+        term:
+          $ref: '#/components/schemas/CurrencyValue'
+    CurrencyValue:
+      type: object
+      description: >-
+        Describes a value that is tied to a monetary amount. Most frequently
+        used to describe limits, premiums, and deductibles.
+      properties:
+        unit:
+          $ref: '#/components/schemas/CurrencyCode'
+          description: The ISO-compatible currency code of the value being represented.
+        value:
+          type: number
+          format: double
+          description: The amount of currency
+    CurrencyCode:
+      type: string
+      enum:
+        - USD
+        - USD_cents
+      description: The ISO-compatible currency code of the value being represented.
+    RelativeValue:
+      type: object
+      description: >-
+        Describes a value that is relative to another, such as the fair market
+        value or replacement value. It is inherently variable and subject to the
+        context in which it is invoked.
+      properties:
+        unit:
+          $ref: '#/components/schemas/Other'
+          description: Always "other".
+        value:
+          $ref: '#/components/schemas/ActualCashValue'
+          description: >-
+            The form of measure used to calculate the relative value, such as
+            "actual cash value" or "ACV" which looks at the original price or
+            investment and factors in depreciation (effectively "Fair Market
+            Value"), or "replacement cost" (sometimes "Actual Loss Sustained" or
+            "ALS") which sets a value against real cost to replace something
+            today. Occasionally, a response of "unknown" may be returned. This
+            value indicates that no specific value was provided in high level
+            policy documents. The value may be subjective and specific to the
+            individual policyholder as specified in their policy contract and
+            should be manually reviewed.
+    Other:
+      type: string
+      enum:
+        - other
+      description: Always "other".
+    ActualCashValue:
+      type: string
+      enum:
+        - actual_cash_value
+        - replacement_value
+        - unknown
+      description: >-
+        The form of measure used to calculate the relative value, such as
+        "actual cash value" or "ACV" which looks at the original price or
+        investment and factors in depreciation (effectively "Fair Market
+        Value"), or "replacement cost" (sometimes "Actual Loss Sustained" or
+        "ALS") which sets a value against real cost to replace something today.
+        Occasionally, a response of "unknown" may be returned. This value
+        indicates that no specific value was provided in high level policy
+        documents. The value may be subjective and specific to the individual
+        policyholder as specified in their policy contract and should be
+        manually reviewed.
+    PercentageValue:
+      type: object
+      description: >-
+        Describes a value that is represented as a percentage, fraction, or
+        ratio of another value. Most frequently depicted for deductibles which
+        may be a percentage of a limit.
+      properties:
+        unit:
+          $ref: '#/components/schemas/Percentage'
+          description: Always "percentage"
+        value:
+          type: number
+          format: double
+          description: The percentage amount determined by this value.
+    Percentage:
+      type: string
+      enum:
+        - percentage
+      description: Always "percentage"
+    DistanceValue:
+      type: object
+      description: >-
+        Describes a value that is tied to a physical length or distance. Most
+        frequently used to describe limits on coverages.
+      properties:
+        unit:
+          $ref: '#/components/schemas/DistanceUnit'
+          description: The distance unit of the value being represented.
+        value:
+          type: number
+          format: double
+          description: The amount of the distance in the units specified
+    DistanceUnit:
+      type: string
+      enum:
+        - mile
+        - kilometer
+      description: The distance unit of the value being represented.
+    PeriodValue:
+      type: object
+      description: >-
+        Describes a value that represents a period of time, such as days, weeks,
+        or months.
+      properties:
+        unit:
+          $ref: '#/components/schemas/TimeScale'
+          description: The scale of time period being represented.
+        value:
+          type: integer
+          description: The amount of time being represented.
+    TimeScale:
+      type: string
+      enum:
+        - day
+        - week
+        - month
+      description: The scale of time period being represented.
+    Discount:
+      type: object
+      description: >-
+        Describes a discount which a policyholder is receiving for a particular
+        covered property under a policy. When available, this object also
+        describes the amount of savings.
+      properties:
+        code:
+          $ref: '#/components/schemas/DiscountType'
+          description: >-
+            The programming-friendly value to indicate the discount being
+            applied. NOTE: We regularly add values to this enumeration, so your
+            code should be able to gracefully handle unexpected enum values
+            (though new values are documented here as they go live).
+        friendly_name:
+          type: string
+          description: A human-readable, friendly name for the discount.
+    DiscountType:
+      type: string
+      enum:
+        - safe_driver
+        - telematics
+        - online
+        - bundle
+        - teen_driver
+        - claim_free
+        - homeowner
+        - new_car
+        - multi_car
+        - pay_in_full
+        - paperless_billing
+        - loyalty
+        - good_student
+        - distant_student
+        - accident_free
+        - continuous_insurance
+        - eft
+        - early_quote
+        - alarm_system
+        - new_home
+        - new_roof
+        - safe_vehicle
+        - smart_vehicle
+        - membership
+        - payment_plan
+        - military
+        - garage_parking
+        - senior
+        - autopay
+        - insurance_to_value
+        - verified_mileage
+        - payment_history
+        - motorcycle_endorsement
+      description: >-
+        The programming-friendly value to indicate the discount being applied.
+        NOTE: We regularly add values to this enumeration, so your code should
+        be able to gracefully handle unexpected enum values (though new values
+        are documented here as they go live).
+    Location:
+      type: object
+      description: >-
+        Describes a physical location and/or structure which is covered under
+        the terms of an insurance policy.
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        coverages:
+          $ref: '#/components/schemas/CoverageInfo'
+          description: A list of coverages that apply to the location being insured.
+        other_deductibles:
+          description: >-
+            A list of deductibles that apply in addition to the
+            coverage-specific deductibles.
+        discounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount'
+          description: A list of discounts being applied to the location.
+        interests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interest'
+          description: >-
+            A list of interested parties, such as mortgagers, lienholders,
+            guarantors, landlords, or others.
+    CoverageInfo:
+      type: object
+      description: A list of coverages that apply to the location being insured.
+      properties:
+        dwelling:
+          $ref: '#/components/schemas/Coverage'
+        dwelling_extension:
+          $ref: '#/components/schemas/Coverage'
+        personal_property:
+          $ref: '#/components/schemas/Coverage'
+        personal_property_off_premises:
+          $ref: '#/components/schemas/Coverage'
+        loss_of_use:
+          $ref: '#/components/schemas/Coverage'
+        service_line:
+          $ref: '#/components/schemas/Coverage'
+        personal_liability:
+          $ref: '#/components/schemas/Coverage'
+        medical_payments:
+          $ref: '#/components/schemas/Coverage'
+        property_damage_others:
+          $ref: '#/components/schemas/Coverage'
+        fire_service:
+          $ref: '#/components/schemas/Coverage'
+        loss_assessment:
+          $ref: '#/components/schemas/Coverage'
+        sewer_backup:
+          $ref: '#/components/schemas/Coverage'
+        arson_reward:
+          $ref: '#/components/schemas/Coverage'
+        credit_card_fraud:
+          $ref: '#/components/schemas/Coverage'
+        debris_removal:
+          $ref: '#/components/schemas/Coverage'
+        oil_release:
+          $ref: '#/components/schemas/Coverage'
+        locks:
+          $ref: '#/components/schemas/Coverage'
+        landscaping:
+          $ref: '#/components/schemas/Coverage'
+        additional_structures:
+          $ref: '#/components/schemas/Coverage'
+    DocumentRef:
+      type: object
+      description: >-
+        Describes the individual insurance document available for download from
+        a given insurance policy, including the content-type (or mimetype) of
+        the document.
+      properties:
+        type:
+          $ref: '#/components/schemas/DocumentType'
+          description: The type of document provided at the corresponding URL.
+        content_type:
+          type: string
+          description: >-
+            The content-type, or mimetype, of the document being conveyed at
+            this location.
+        href:
+          type: string
+          description: The path to retrieve the document described in this object.
+    DocumentType:
+      type: string
+      enum:
+        - declaration
+        - id_card
+        - renewal
+        - evidence_of_insurance
+        - cancellation
+      description: The type of document provided at the corresponding URL.
+    Events:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The total, unfiltered number of events without pagination
+        filtered_count:
+          type: integer
+          description: The unpaginated number of events matching the filter
+        _embedded:
+          $ref: '#/components/schemas/EmbeddedEvents'
+    EmbeddedEvents:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    Event:
+      type: object
+      description: >-
+        Represents an event delivered via webhook on the occurrence of certain
+        policy changes.
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the received event.
+        event_type:
+          $ref: '#/components/schemas/EventType'
+          description: An enumerated string representing the type of event that occurred.
+        occurred_at:
+          type: string
+          description: >-
+            The date and time in which the event occurred, represented as an
+            ISO-8601 string.
+        _links:
+          $ref: '#/components/schemas/EventPayloadLinkContainer'
+    EventType:
+      type: string
+      enum:
+        - link.created
+        - link.successful
+        - link.documents.available
+        - link.broken
+        - link.stale
+        - link.changed
+        - policies.unlinked
+        - policy.activated
+        - policy.cancelling
+        - policy.expired
+        - policy.reinstated
+        - policy.renewed
+        - policy.changed
+        - policy.changed.coverage
+        - policy.changed.insureds
+        - policy.changed.status
+        - policy.changed.premium
+      description: An enumerated string representing the type of event that occurred.
+    EventPayloadLink:
+      type: object
+      description: Link to view the full event payload.
+      properties:
+        href:
+          type: string
+    EventPayloadLinkContainer:
+      type: object
+      properties:
+        payload:
+          $ref: '#/components/schemas/EventPayloadLink'
+          description: Link to view the full event payload.
+    Link:
+      type: object
+      description: >-
+        Represents the individual connections between Covie and a Policyholder's
+        account with a carrier and wraps the policies retrieved from it that
+        have been made available to the consumer.
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the link object.
+        object:
+          type: string
+          description: >-
+            String representing the object’s type. Objects of the same type
+            share the same value.
+        integration_id:
+          type: string
+          description: >-
+            The identifier of the integration that was used to establish the
+            link.
+        policy_count:
+          type: integer
+          description: The number of policies provided by this link.
+        status:
+          $ref: '#/components/schemas/LinkStatus'
+          description: >-
+            A string representation of the link's current status. This is
+            distinct from a policy's status which is an indicator to whether a
+            policy is in force. A link's status is an indicator of how new and
+            complete the data is and whether or not it is possible to retrieve
+            refreshed information.
+        is_tracked:
+          type: boolean
+          description: >-
+            A flag indicating if the policies provided by this link should be
+            tracked by Covie's monitoring service.
+        tracking_frequency:
+          $ref: '#/components/schemas/TrackingFrequency'
+          description: >-
+            The frequency of which tracking should be performed. This value is
+            `never` when tracking is disabled.
+        updated_at:
+          type: string
+          description: >-
+            The date and time, in ISO-8601 format, when the link was last
+            updated.
+        created_at:
+          type: string
+          description: >-
+            The date and time, in ISO-8601 format, when the link was first
+            created.
+        _links:
+          $ref: '#/components/schemas/LinkInfo'
+    LinkStatus:
+      type: string
+      enum:
+        - new
+        - active
+        - document_uploaded
+        - broken
+        - revoked
+        - stale
+      description: >-
+        A string representation of the link's current status. This is distinct
+        from a policy's status which is an indicator to whether a policy is in
+        force. A link's status is an indicator of how new and complete the data
+        is and whether or not it is possible to retrieve refreshed information.
+    TrackingFrequency:
+      type: string
+      enum:
+        - daily
+        - weekly
+        - monthly
+        - never
+        - on_demand
+      description: >-
+        The frequency of which tracking should be performed. This value is
+        `never` when tracking is disabled.
+    Links:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Total number of results that can be returned.
+        filtered_count:
+          type: integer
+          description: >-
+            If a search filter is applied, this will return the total number of
+            results that match the filter.
+        _embedded:
+          $ref: '#/components/schemas/EmbeddedLinks'
+    EmbeddedLinks:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    LinkDetails:
+      type: object
+      properties:
+        href:
+          type: string
+        content_type:
+          type: string
+    LinkInfo:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/LinkDetails'
+          description: Link to retrieve the link's details.
+        carrier_logo:
+          $ref: '#/components/schemas/LinkDetails'
+          description: Link to the carrier's logo.
+        uploaded_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkDetails'
+          description: List of documents uploaded for the link.
+    EventBroadcast:
+      type: object
+      description: Record of a broadcast to a webhook endpoint when an event is triggered.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the broadcast.
+        queued_at:
+          type: string
+          description: Date/Time the broadcast was prepared for delivery.
+        broadcast_at:
+          type: string
+          description: Date/Time the broadcast was sent.
+        request_uri:
+          type: string
+          description: URI the broadcast was sent to.
+        response_code:
+          type: integer
+          description: Response code from the URI.
+        response_body:
+          type: string
+          description: Contents of the response.
+    EmbeddedRebroadcastEvents:
+      type: object
+      properties:
+        broadcasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventBroadcast'
+          description: List of broadcasts, one per endpoint called
+    RebroadcastEventResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Number of endpoints called by this re-broadcast
+        _embedded:
+          $ref: '#/components/schemas/EmbeddedRebroadcastEvents'
+    Policies:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Total number of results that can be returned.
+        filtered_count:
+          type: integer
+          description: The total number of policies that match the filter.
+        _embedded:
+          $ref: '#/components/schemas/EmbeddedPolicies'
+    EmbeddedPolicies:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+    Policy:
+      type: object
+      description: >-
+        This describes, in high level, the insurance policy record that is
+        provided by a link. This object encapsulates all the necessary details
+        to understand the policy's status, policyholders, and covered persons or
+        properties.
+      properties:
+        id:
+          type: string
+          description: >-
+            Unique identifier of a policy record within the application that
+            obtained it.
+        object:
+          type: string
+          description: >-
+            String representing the object’s type. Objects of the same type
+            share the same value.
+        fingerprint:
+          type: string
+          description: A universally-unique identifier of a policy.
+        carrier:
+          $ref: '#/components/schemas/Carrier'
+        number:
+          type: string
+          description: >-
+            The full policy number as provided by the issuing company. This is
+            not available to all users and may be null when not active on the
+            account.
+        masked_number:
+          type: string
+          description: >-
+            This is a masked version of the policy number provided by the
+            issuing company. This is always provided and available to all
+            customers.
+        line:
+          $ref: '#/components/schemas/LineOfBusiness'
+          description: A string indicating the line of business this policy encompasses.
+        policyholders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policyholder'
+          description: A list of insureds, or policyholders assigned to this policy.
+        vehicles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        status:
+          $ref: '#/components/schemas/PolicyStatus'
+          description: A string representation of the policy's current status.
+        term_length:
+          $ref: '#/components/schemas/PeriodValue'
+        inception_date:
+          type: string
+          description: >-
+            The date when the policy becomes in force. This date is provided in
+            ISO-8601 format excluding time.
+        expiration_date:
+          type: string
+          description: >-
+            The date when the described policy period ends. This date is
+            provided in ISO-8601 format excluding time.
+        cancellation_date:
+          type: string
+          description: >-
+            The date when the policy is set to be cancelled. This date is
+            provided in ISO-8601 format excluding time.
+        cancellation_reason:
+          $ref: '#/components/schemas/CancellationReason'
+          description: >-
+            The determined reason for the cancellation, such as
+            insured_non_payment or carrier_non_renew or insured_action. This
+            value is null when cancellation is not active or not explicitly
+            indicated by the carrier systems and is not guaranteed to be
+            provided in any circumstance.
+        linked_at:
+          type: string
+          description: >-
+            The date and time which the policy was initially retrieved. This
+            date and time is provided in ISO-8601 format.
+        last_synced_at:
+          type: string
+          description: >-
+            The date and time when the policy record was last updated. This date
+            and time is provided in ISO-8601 format.
+        _links:
+          $ref: '#/components/schemas/LinkedResources'
+          description: >-
+            A polymorphic list of externally linked resources related to this
+            policy such as documents or logos for carriers.
+        _embedded:
+          $ref: '#/components/schemas/EmbeddedObjects'
+          description: A container for objects wrapped by the current object.
+        link_id:
+          type: string
+          description: Unique identifier of the link associated to the policy.
+    LineOfBusiness:
+      type: string
+      enum:
+        - personal_auto
+        - homeowner
+        - renter
+        - motorcycle
+      description: A string indicating the line of business this policy encompasses.
+    PolicyStatus:
+      type: string
+      enum:
+        - active
+        - expired
+        - pending
+        - cancelled
+      description: A string representation of the policy's current status.
+    CancellationReason:
+      type: string
+      enum:
+        - carrier_non_renew
+        - insured_non_payment
+        - insured_requested
+        - other
+      description: >-
+        The determined reason for the cancellation, such as insured_non_payment
+        or carrier_non_renew or insured_action. This value is null when
+        cancellation is not active or not explicitly indicated by the carrier
+        systems and is not guaranteed to be provided in any circumstance.
+    Logo:
+      type: object
+      description: A link to the logo for the carrier on the policy.
+      properties:
+        href:
+          type: string
+    LinkedResources:
+      type: object
+      description: >-
+        A polymorphic list of externally linked resources related to this policy
+        such as documents or logos for carriers.
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRef'
+          description: >-
+            A list of documents obtained and available for this policy. This
+            list may be empty if no documents are available or if document
+            access is not enabled for your account.
+        carrier_logo:
+          $ref: '#/components/schemas/Logo'
+          description: A link to the logo for the carrier on the policy.
+    EmbeddedObjects:
+      type: object
+      description: A container for objects wrapped by the current object.
+      properties:
+        missing_fields:
+          type: array
+          items:
+            type: string
+          description: A list of policy fields that were unable to be processed.
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+servers:
+  - url: https://api.covie.io/v1
+    description: Production
+  - url: https://stoplight.io/mocks/covie/link-access/37161102
+    description: Mock
