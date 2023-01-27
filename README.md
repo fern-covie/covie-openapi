@@ -1,6 +1,6 @@
 # Covie API OpenAPI Description
 
-This repository contains the [OpenAPI description](/openapi.yml) for <{docs_url}>.
+This repository contains the [OpenAPI description](/openapi.yml) for https://developer.covie.com/docs.
 
 ## What is OpenAPI?
 
